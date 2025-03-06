@@ -4,10 +4,8 @@ package ch.fhnw.algd1.converters.utf8;
  * Created on 05.09.2014
  */
 
-import java.util.Arrays;
-
 /**
- * @author 
+ * @author Klemen Zmahar
  */
 public class UTF8Converter {
 	public static byte[] codePointToUTF(int x) {
