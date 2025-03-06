@@ -27,27 +27,19 @@ public class UTF8Converter {
 		}
 
 		b = new byte[byteCount];
-		byte firstByte;
 
 		if (byteCount == 2) {
-			firstByte = -64;
-			firstByte = (byte) (firstByte >>> 5);
+			b[0] = (byte) (0xC0 | ((x >> 6) & 0x1F));
+			b[1] = (byte) (0x80 | ((x >> 18) & 0x3F));
 		} else if (byteCount == 3) {
-			firstByte = -32;
-			firstByte = (byte) (firstByte >>> 4);
+			b[0] = (byte) (0xE0 | ((x >> 12) & 0x0F));
+			b[1] = (byte) (0x80 | ((x >> 6) & 0x3F));
+			b[2] = (byte) (0x80 | (x & 0x3F));
 		} else {
-			firstByte = -16;
-			firstByte = (byte) (firstByte >>> 3);
-		}
-
-		int tempX = x >>> (byteCount*8);
-		b[0] = firstByte;
-
-		for (int i = 0; i < byteCount-1; i++) {
-			byte nextByte = -128;
-			nextByte = (byte) (x >>> 6);
-
-			b[i+1] = nextByte;
+			b[0] = (byte) (0xF0 | ((x >> 18) & 0x07));
+			b[1] = (byte) (0x80 | ((x >> 12) & 0x3F));
+			b[2] = (byte) (0x80 | ((x >> 6) & 0x3F));
+			b[3] = (byte) (0x80 | (x & 0x3F));
 		}
 
 		// UTF-8 encoding of code point x. b[0] shall contain the first byte.
