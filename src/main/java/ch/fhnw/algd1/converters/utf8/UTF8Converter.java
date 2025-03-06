@@ -5,7 +5,7 @@ package ch.fhnw.algd1.converters.utf8;
  */
 
 /**
- * @author Klemen Zmahar
+ * @author
  */
 public class UTF8Converter {
 	public static byte[] codePointToUTF(int x) {
