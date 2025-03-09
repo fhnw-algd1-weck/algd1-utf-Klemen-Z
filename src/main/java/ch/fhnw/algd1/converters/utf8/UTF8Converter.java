@@ -3,22 +3,66 @@ package ch.fhnw.algd1.converters.utf8;
 /*
  * Created on 05.09.2014
  */
+
 /**
- * @author 
+ * @author
  */
 public class UTF8Converter {
 	public static byte[] codePointToUTF(int x) {
-		byte[] b = null;
-		// TODO allocate b in the right size (depending on x) and fill it with the
+		byte[] b;
+
+		if (x < 0x80) {
+			b = new byte[1];
+			b[0] = (byte) x;
+			return b;
+		}
+
+		int byteCount = 1;
+		for (int i = 0; i < 4; i++) {
+			if ((x-127) >>> (i*8) != 0) {
+				byteCount++;
+			}
+		}
+
+		b = new byte[byteCount];
+
+		if (byteCount == 2) {
+			b[0] = (byte) (0xC0 | ((x >>> 6) & 0x1F));
+		} else if (byteCount == 3) {
+			b[0] = (byte) (0xE0 | ((x >>> 12) & 0x0F));
+		} else {
+			b[0] = (byte) (0xF0 | ((x >>> 18) & 0x07));
+		}
+
+		for (int i = 1; i < byteCount; i++) {
+			b[i] = (byte) (0x80 | ((x >>> (6*(byteCount-1-i))) & 0x3F));
+		}
+
 		// UTF-8 encoding of code point x. b[0] shall contain the first byte.
 		return b;
 	}
 
 	public static int UTFtoCodePoint(byte[] bytes) {
 		if (isValidUTF8(bytes)) {
-			// TODO replace return statement below by code to return the code point
+			if (bytes.length < 2) {
+				return bytes[0];
+			}
+
+			bytes[0] <<= bytes.length;
+			bytes[0] >>>= bytes.length;
+
+			int codePoint = bytes[0];
+
+			for (int i = 1; i < bytes.length; i++) {
+				bytes[i] <<= 1;
+				bytes[i] >>>= 1;
+
+				codePoint <<= 6;
+				codePoint |= bytes[i];
+			}
+
 			// UTF-8 encoded in array bytes. bytes[0] contains the first byte
-			return 0;
+			return codePoint;
 		} else return 0;
 	}
 
